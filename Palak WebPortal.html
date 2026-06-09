@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palak Gadher — Cybersecurity Analyst</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0b0d10;
+      --surface:  #111318;
+      --border:   #1e2230;
+      --accent:   #00e5a0;        /* electric teal — signature */
+      --accent2:  #7b5ea7;        /* muted violet for depth */
+      --text:     #c8cdd8;
+      --text-dim: #5a6075;
+      --white:    #eef0f5;
+      --red:      #ff4d6d;
+      --yellow:   #f5c542;
+      --font-ui:  'Space Grotesk', sans-serif;
+      --font-mono:'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── SCANLINE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.04) 2px,
+        rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 3rem;
+      background: rgba(11,13,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8rem 3rem 4rem;
+      max-width: 1100px; margin: 0 auto;
+      position: relative;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow::before { content: '> '; }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .hero h1 span { color: var(--accent); }
+
+    .hero-title {
+      font-family: var(--font-mono);
+      font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+    }
+
+    .hero-desc {
+      max-width: 560px;
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-badges {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      margin-bottom: 2.5rem;
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+      background: var(--surface);
+      letter-spacing: 0.05em;
+    }
+    .badge.green { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.06); }
+    .badge.purple { border-color: var(--accent2); color: var(--accent2); background: rgba(123,94,167,0.08); }
+
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.5rem;
+      border-radius: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+    }
+    .btn-primary:hover { background: #00ffb3; box-shadow: 0 0 20px rgba(0,229,160,0.3); }
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: transparent;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Terminal widget — signature element */
+    .terminal {
+      position: absolute;
+      right: 3rem; top: 50%;
+      transform: translateY(-50%);
+      width: 380px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      box-shadow: 0 32px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,160,0.06);
+    }
+    .term-bar {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+    }
+    .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .term-body { padding: 1.2rem; min-height: 220px; }
+    .t-line { margin-bottom: 0.4rem; color: var(--text-dim); }
+    .t-line .cmd { color: var(--accent); }
+    .t-line .path { color: var(--accent2); }
+    .t-line .out { color: var(--text); }
+    .t-line .err { color: var(--red); }
+    .t-line .ok  { color: var(--accent); }
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--accent);
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ─── SECTIONS ─── */
+    section { max-width: 1100px; margin: 0 auto; padding: 5rem 3rem; }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .section-label::before { content: '// '; }
+    h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 3rem;
+      line-height: 1.2;
+    }
+    .divider { width: 100%; height: 1px; background: var(--border); margin: 0; }
+
+    /* ─── SKILLS GRID ─── */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: 4px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .skill-card-icon { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .skill-card h3 { font-size: 0.85rem; font-weight: 600; color: var(--white); margin-bottom: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skill-tag {
+      font-family: var(--font-mono);
+      font-size: 0.67rem;
+      padding: 0.2rem 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-dim);
+    }
+
+    /* ─── EXPERIENCE ─── */
+    .exp-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .exp-meta { text-align: right; }
+    .exp-date {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .exp-company { font-size: 0.8rem; color: var(--accent2); font-weight: 500; }
+    .exp-content h3 { font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 0.5rem; }
+    .exp-content p { font-size: 0.9rem; color: var(--text); margin-bottom: 0.75rem; }
+    .exp-bullets { list-style: none; }
+    .exp-bullets li {
+      font-size: 0.88rem;
+      color: var(--text);
+      padding: 0.3rem 0;
+      padding-left: 1.2rem;
+      position: relative;
+      border-bottom: 1px solid rgba(30,34,48,0.5);
+    }
+    .exp-bullets li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); font-size: 0.7rem; top: 0.35rem; }
+
+    /* ─── PROJECT ─── */
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .project-card:hover { border-color: var(--accent2); transform: translateY(-3px); }
+    .project-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .project-header h3 { font-size: 1rem; font-weight: 600; color: var(--white); }
+    .project-header .proj-type {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .project-body { padding: 1.5rem; }
+    .project-body p { font-size: 0.88rem; margin-bottom: 1rem; }
+    .project-stats {
+      display: flex; gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .stat { text-align: center; }
+    .stat .num { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 600; color: var(--accent); display: block; }
+    .stat .lbl { font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ─── CERTS ─── */
+    .certs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .cert-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: 4px;
+      display: flex; gap: 1rem; align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+    .cert-card:hover { border-color: var(--yellow); }
+    .cert-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .cert-card h3 { font-size: 0.9rem; font-weight: 600; color: var(--white); margin-bottom: 0.2rem; }
+    .cert-card p { font-size: 0.78rem; color: var(--text-dim); }
+
+    /* ─── CONTACT ─── */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+    .contact-info p { font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.8; }
+    .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.75rem;
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+    .contact-link:hover { border-color: var(--accent); }
+    .contact-link .cl-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+    .contact-link .cl-val { font-family: var(--font-mono); font-size: 0.8rem; color: var(--white); }
+    .contact-link .cl-icon { font-size: 1.2rem; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+    footer span { color: var(--accent); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .terminal { display: none; }
+      section { padding: 3.5rem 1.5rem; }
+      .exp-item { grid-template-columns: 1fr; }
+      .exp-meta { text-align: left; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+
+    /* scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* glow dot */
+    .glow-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+      margin-right: 0.5rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">palakgadher@sec:~$</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#certs">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="about">
+  <p class="hero-eyebrow">Cybersecurity Analyst &amp; Penetration Tester</p>
+  <h1>Palak<br/><span>Gadher</span></h1>
+  <p class="hero-title">// VAPT · AWS Security · CEH v13 · CRTA</p>
+  <p class="hero-desc">
+    Hunting vulnerabilities across web applications, networks, and cloud environments.
+    1+ year breaking things professionally — so others can't.
+  </p>
+  <div class="hero-badges">
+    <span class="badge green"><span class="glow-dot"></span>Open to opportunities</span>
+    <span class="badge">Vadodara, Gujarat</span>
+    <span class="badge purple">CEH v13 Certified</span>
+    <span class="badge purple">CRTA Certified</span>
+  </div>
+  <div class="hero-cta">
+    <a href="#contact" class="btn btn-primary">Get in touch</a>
+    <a href="#experience" class="btn btn-ghost">View experience</a>
+  </div>
+
+  <!-- Terminal widget -->
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dot" style="background:#ff5f57"></div>
+      <div class="term-dot" style="background:#febc2e"></div>
+      <div class="term-dot" style="background:#28c840"></div>
+      <span style="font-size:0.7rem;color:var(--text-dim);margin-left:auto">palak — vapt-scan</span>
+    </div>
+    <div class="term-body">
+      <div class="t-line"><span class="path">~/assessments</span> <span class="cmd">$ nmap -sV -p- target</span></div>
+      <div class="t-line"><span class="out">Starting scan on 500+ assets...</span></div>
+      <div class="t-line"><span class="ok">[+] 50+ vulnerabilities identified</span></div>
+      <div class="t-line"><span class="err">[!] SQL Injection → HIGH</span></div>
+      <div class="t-line"><span class="err">[!] IDOR → HIGH</span></div>
+      <div class="t-line"><span class="err">[!] XSS → MEDIUM</span></div>
+      <div class="t-line"><span class="out">[*] Generating PoC report...</span></div>
+      <div class="t-line"><span class="ok">[✓] Report delivered to dev team</span></div>
+      <div class="t-line" style="margin-top:0.8rem"><span class="path">~/assessments</span> <span class="cmd">$</span> <span class="cursor"></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="reveal">
+    <p class="section-label">Capabilities</p>
+    <h2>Technical Arsenal</h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-card-icon">🔍</div>
+        <h3>VAPT Tools</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Burp Suite</span>
+          <span class="skill-tag">Nmap</span>
+          <span class="skill-tag">SQLmap</span>
+          <span class="skill-tag">Metasploit</span>
+          <span class="skill-tag">Nikto</span>
+          <span class="skill-tag">Gobuster</span>
+          <span class="skill-tag">Hydra</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-icon">☁️</div>
+        <h3>Cloud Security</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">AWS IAM</span>
+          <span class="skill-tag">EC2</span>
+          <span class="skill-tag">S3</span>
+          <span class="skill-tag">RDS</span>
+          <span class="skill-tag">CloudTrail</span>
+          <span class="skill-tag">GuardDuty</span>
+          <span class="skill-tag">boto3</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-icon">🐍</div>
+        <h3>Programming</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">Bash</span>
+          <span class="skill-tag">Terraform</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-icon">🛡️</div>
+        <h3>Security Concepts</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">OWASP Top 10</span>
+          <span class="skill-tag">Threat Intelligence</span>
+          <span class="skill-tag">CVE Research</span>
+          <span class="skill-tag">Risk Assessment</span>
+          <span class="skill-tag">CIS Benchmarks</span>
+          <span class="skill-tag">PCI-DSS</span>
+          <span class="skill-tag">HIPAA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="reveal">
+    <p class="section-label">Work History</p>
+    <h2>Professional Experience</h2>
+    <div class="exp-item">
+      <div class="exp-meta">
+        <span class="exp-date">Feb 2025 – Present</span>
+        <span class="exp-company">7Hillscyberwall</span>
+      </div>
+      <div class="exp-content">
+        <h3>Cybersecurity Analyst — VAPT</h3>
+        <p>Conducting full-scope penetration testing engagements across web applications, networks, and systems for clients across industries.</p>
+        <ul class="exp-bullets">
+          <li>Assessed 500+ assets, identifying 50+ exploitable vulnerabilities including SQLi, XSS, IDOR, Clickjacking, and authentication flaws</li>
+          <li>Performed both manual and automated testing using Burp Suite, Nmap, SQLmap, Metasploit, and Nikto</li>
+          <li>Prepared detailed vulnerability reports with proof-of-concepts, CVSS risk ratings, and remediation guidance</li>
+          <li>Collaborated with dev and IT teams to drive remediation and harden security controls</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="reveal">
+    <p class="section-label">Work</p>
+    <h2>Projects</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem">
+
+      <!-- Project 1 -->
+      <div class="project-card">
+        <div class="project-header">
+          <h3>AWS Cloud Misconfiguration Scanner</h3>
+          <span class="proj-type">Python · boto3</span>
+        </div>
+        <div class="project-body">
+          <p>
+            Automated AWS security auditing tool scanning 16 services for misconfigurations,
+            with compliance mapping and PDF reports.
+          </p>
+          <div class="project-stats">
+            <div class="stat"><span class="num">16</span><span class="lbl">Services</span></div>
+            <div class="stat"><span class="num">67+</span><span class="lbl">Misconfigs</span></div>
+            <div class="stat"><span class="num">4</span><span class="lbl">Frameworks</span></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">AWS IAM</span>
+            <span class="skill-tag">AWS STS</span>
+            <span class="skill-tag">CIS Benchmarks</span>
+            <span class="skill-tag">SOC 2</span>
+            <span class="skill-tag">PCI-DSS</span>
+            <span class="skill-tag">HIPAA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project-card">
+        <div class="project-header">
+          <h3>Deep Source Code Security Scanner</h3>
+          <span class="proj-type">Python · Regex SAST</span>
+        </div>
+        <div class="project-body">
+          <p>
+            Line-by-line static analysis tool that detects OWASP Top 10 vulnerabilities,
+            hardcoded secrets, and insecure dependencies across PHP, Python, JS, and HTML codebases.
+            Outputs an interactive HTML dashboard and JSON report.
+          </p>
+          <div class="project-stats">
+            <div class="stat"><span class="num">7</span><span class="lbl">Vuln Classes</span></div>
+            <div class="stat"><span class="num">18</span><span class="lbl">Findings (demo)</span></div>
+            <div class="stat"><span class="num">6</span><span class="lbl">File Types</span></div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag">SQLi Detection</span>
+            <span class="skill-tag">XSS Detection</span>
+            <span class="skill-tag">Command Injection</span>
+            <span class="skill-tag">LFI / Path Traversal</span>
+            <span class="skill-tag">Weak Crypto</span>
+            <span class="skill-tag">Hardcoded Secrets</span>
+            <span class="skill-tag">HTML Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CERTS -->
+<section id="certs">
+  <div class="reveal">
+    <p class="section-label">Credentials</p>
+    <h2>Certifications</h2>
+    <div class="certs-grid">
+      <div class="cert-card">
+        <div class="cert-icon">🎯</div>
+        <div>
+          <h3>Certified Red Team Analyst</h3>
+          <p>CRTA — CyberWarFare Labs</p>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🏅</div>
+        <div>
+          <h3>Certified Ethical Hacker v13</h3>
+          <p>CEH — EC-Council</p>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">💳</div>
+        <div>
+          <h3>Mastercard Cybersecurity Program</h3>
+          <p>Forage</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem">
+      <p class="section-label" style="margin-bottom:0.5rem">Platforms</p>
+      <div class="hero-badges" style="margin-bottom:0">
+        <span class="badge green">TryHackMe</span>
+        <span class="badge green">Hack The Box</span>
+        <span class="badge">OverTheWire</span>
+        <span class="badge">OverTheWire Bandit ✓</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <p class="section-label">Let's connect</p>
+    <h2>Get In Touch</h2>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <p>
+          I'm currently open to VAPT, cloud security, and red-team opportunities.
+          Whether you need a penetration test, a security review, or just want to talk
+          shop — reach out.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:palakgadher7@gmail.com" class="contact-link">
+            <span class="cl-icon">✉️</span>
+            <div>
+              <div class="cl-label">Email</div>
+              <div class="cl-val">palakgadher7@gmail.com</div>
+            </div>
+          </a>
+          <a href="https://linkedin.com/in/palakgadher7" target="_blank" class="contact-link">
+            <span class="cl-icon">💼</span>
+            <div>
+              <div class="cl-label">LinkedIn</div>
+              <div class="cl-val">linkedin.com/in/palakgadher7</div>
+            </div>
+          </a>
+          <a href="https://github.com/palakgadher" target="_blank" class="contact-link">
+            <span class="cl-icon">🐙</span>
+            <div>
+              <div class="cl-label">GitHub</div>
+              <div class="cl-val">github.com/palakgadher</div>
+            </div>
+          </a>
+          <a href="tel:+919904700037" class="contact-link">
+            <span class="cl-icon">📞</span>
+            <div>
+              <div class="cl-label">Phone</div>
+              <div class="cl-val">+91 99047 00037</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center;font-family:var(--font-mono);color:var(--text-dim);font-size:0.78rem;line-height:2">
+          <div style="font-size:3rem;margin-bottom:1rem">🔐</div>
+          <div><span style="color:var(--accent)">B.C.A</span> Cyber Security</div>
+          <div>ITM Vocational University</div>
+          <div>CGPA: <span style="color:var(--accent)">8.9/10</span></div>
+          <div style="margin-top:0.5rem;color:var(--text-dim)">Graduated 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Crafted by <span>Palak Gadher</span> · VAPT · AWS Security · Vadodara, Gujarat</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
